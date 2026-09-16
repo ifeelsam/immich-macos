@@ -66,10 +66,32 @@ struct ImmichClient: Sendable {
             body["visibility"] = "timeline"
         case .archived:
             body["visibility"] = "archive"
+        case .locked:
+            body["visibility"] = "locked"
+        case .person(let person):
+            body["personIds"] = [person.id]
+            body["visibility"] = "timeline"
+        case .people:
+            throw ClientError.invalidResponse
         case .album(let album):
             body["albumIds"] = [album.id]
         }
         return try await search(body)
+    }
+
+    func people() async throws -> [ImmichPerson] {
+        let (data, response) = try await URLSession.shared.data(for: request("people"))
+        try validate(response, accepted: [200])
+        let decoded = try JSONDecoder().decode(ImmichPeopleResponse.self, from: data)
+        return decoded.people
+            .filter { ($0.isHidden ?? false) == false && !($0.name ?? "").isEmpty }
+            .sorted { $0.displayName.localizedCaseInsensitiveCompare($1.displayName) == .orderedAscending }
+    }
+
+    func personThumbnail(id: String) async throws -> Data {
+        let (data, response) = try await URLSession.shared.data(for: request("people/\(id)/thumbnail"))
+        try validate(response, accepted: 200...299)
+        return data
     }
 
     func thumbnail(id: String, preview: Bool = false) async throws -> Data {

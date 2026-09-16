@@ -77,6 +77,19 @@ struct ImmichAlbum: Codable, Identifiable, Hashable, Sendable {
     let albumThumbnailAssetId: String?
 }
 
+struct ImmichPerson: Codable, Identifiable, Hashable, Sendable {
+    let id: String
+    let name: String?
+    let numberOfAssets: Int?
+    let isHidden: Bool?
+
+    var displayName: String { (name?.isEmpty == false ? name! : "Unnamed Person") }
+}
+
+struct ImmichPeopleResponse: Codable, Sendable {
+    let people: [ImmichPerson]
+}
+
 struct ImmichSearchResponse: Codable, Sendable {
     struct Assets: Codable, Sendable {
         let items: [ImmichAsset]
@@ -91,6 +104,9 @@ enum LibraryRoute: Hashable, Identifiable {
     case favorites
     case videos
     case archived
+    case locked
+    case people
+    case person(ImmichPerson)
     case album(ImmichAlbum)
 
     var id: String {
@@ -99,6 +115,9 @@ enum LibraryRoute: Hashable, Identifiable {
         case .favorites: "favorites"
         case .videos: "videos"
         case .archived: "archived"
+        case .locked: "locked"
+        case .people: "people"
+        case .person(let person): "person-\(person.id)"
         case .album(let album): "album-\(album.id)"
         }
     }
@@ -109,6 +128,9 @@ enum LibraryRoute: Hashable, Identifiable {
         case .favorites: "Favorites"
         case .videos: "Videos"
         case .archived: "Archived"
+        case .locked: "Locked"
+        case .people: "People"
+        case .person(let person): person.displayName
         case .album(let album): album.albumName
         }
     }

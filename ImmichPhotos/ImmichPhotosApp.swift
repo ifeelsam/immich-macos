@@ -99,24 +99,28 @@ struct ImmichPhotosApp: App {
             Sidebar(route: $route, albums: albums)
                 .navigationSplitViewColumnWidth(min: 190, ideal: 220, max: 280)
         } detail: {
-            LibraryScreen(
-                model: library,
-                client: client,
-                thumbnails: thumbnails,
-                gridSize: $gridSize,
-                albums: albums,
-                isUploading: isUploading,
-                onOpen: { selectedAsset = $0 },
-                onSettings: { showSettings = true },
-                onImport: { showImporter = true },
-                onCreateAlbum: { showNewAlbum = true },
-                onAddToAlbum: { album in Task { await addSelection(to: album) } },
-                onDelete: { pendingDelete = Set(library.selectedAssets.map(\.id)) }
-            )
+            if case .some(.people) = route {
+                PeopleBrowser(client: client) { person in route = .person(person) }
+            } else {
+                LibraryScreen(
+                    model: library,
+                    client: client,
+                    thumbnails: thumbnails,
+                    gridSize: $gridSize,
+                    albums: albums,
+                    isUploading: isUploading,
+                    onOpen: { selectedAsset = $0 },
+                    onSettings: { showSettings = true },
+                    onImport: { showImporter = true },
+                    onCreateAlbum: { showNewAlbum = true },
+                    onAddToAlbum: { album in Task { await addSelection(to: album) } },
+                    onDelete: { pendingDelete = Set(library.selectedAssets.map(\.id)) }
+                )
+            }
         }
         .task { await reloadConnection() }
         .onChange(of: route) { _, route in
-            guard let route, let client = session.client else { return }
+            guard let route, route != .people, let client = session.client else { return }
             Task { await library.load(route: route, using: client) }
         }
     }
@@ -125,7 +129,7 @@ struct ImmichPhotosApp: App {
         guard let client = session.client else { return }
         do {
             albums = try await client.albums()
-            if let route { await library.load(route: route, using: client) }
+            if let route, route != .people { await library.load(route: route, using: client) }
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -195,6 +199,12 @@ private struct Sidebar: View {
                     .tag(LibraryRoute.videos)
                 Label("Archived", systemImage: "archivebox")
                     .tag(LibraryRoute.archived)
+                Label("Locked", systemImage: "lock")
+                    .tag(LibraryRoute.locked)
+            }
+            Section("Discover") {
+                Label("People", systemImage: "person.2")
+                    .tag(LibraryRoute.people)
             }
             Section("Albums") {
                 ForEach(albums) { album in
