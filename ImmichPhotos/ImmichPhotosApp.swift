@@ -257,7 +257,7 @@ private struct LibraryScreen: View {
                 }
             case .loaded:
                 PhotoGrid(
-                    sections: model.sections,
+                    sections: model.displayedSections,
                     selectedIDs: model.selectedIDs,
                     selectionMode: model.selectionMode,
                     gridSize: gridSize,
@@ -273,6 +273,7 @@ private struct LibraryScreen: View {
             }
         }
         .navigationTitle(model.route.title)
+        .searchable(text: $model.searchText, prompt: "Search loaded photos")
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
                 if model.selectionMode {

@@ -24,6 +24,7 @@ final class LibraryViewModel {
     private(set) var isLoadingMore = false
     var selectedIDs = Set<String>()
     var selectionMode = false
+    var searchText = ""
 
     private var nextPage: Int? = 1
     private var seenIDs = Set<String>()
@@ -31,6 +32,20 @@ final class LibraryViewModel {
     private let pageSize = 180
 
     var selectedAssets: [ImmichAsset] { assets.filter { selectedIDs.contains($0.id) } }
+    var displayedSections: [Section] {
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return sections }
+        return sections.compactMap { section in
+            let assets = section.assets.filter { asset in
+                let location = [asset.exifInfo?.city, asset.exifInfo?.state, asset.exifInfo?.country]
+                    .compactMap { $0 }.joined(separator: " ")
+                return asset.originalFileName.localizedCaseInsensitiveContains(query)
+                    || location.localizedCaseInsensitiveContains(query)
+            }
+            guard !assets.isEmpty else { return nil }
+            return Section(id: section.id, title: section.title, assets: assets)
+        }
+    }
 
     func load(route: LibraryRoute, using client: ImmichClient) async {
         generation += 1
