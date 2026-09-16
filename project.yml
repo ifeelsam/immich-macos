@@ -1,0 +1,34 @@
+name: ImmichPhotos
+options:
+  bundleIdPrefix: app.immichphotos
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+
+targets:
+  ImmichPhotos:
+    type: application
+    platform: macOS
+    sources:
+      - ImmichPhotos
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.immichphotos.gallery
+        INFOPLIST_FILE: ImmichPhotos/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        CODE_SIGN_STYLE: Automatic
+
+schemes:
+  ImmichPhotos:
+    build:
+      targets:
+        ImmichPhotos: all
+    run:
+      config: Debug
+    archive:
+      config: Release

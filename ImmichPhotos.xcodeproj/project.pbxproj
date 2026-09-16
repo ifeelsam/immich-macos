@@ -1,0 +1,377 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		31582572B0D1626E437FBF98 /* ThumbnailStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C20657FE718DA285A6960D /* ThumbnailStore.swift */; };
+		3499C8F3F3E53DF266F00BFA /* PhotoGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57102B7F22DD8A1D854AC628 /* PhotoGrid.swift */; };
+		64A4205D57574232F365D1E7 /* LibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74959F41A5EC9BCF3CD7F7AA /* LibraryViewModel.swift */; };
+		68FD8B4BF663346A56ADC7A1 /* ImmichClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B847E94F1C51BD2AEF138CCC /* ImmichClient.swift */; };
+		874FA0895F9FD1BEF2BE39A8 /* PhotoDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BFD117AB2CE4C8BFAFFA5E /* PhotoDetailView.swift */; };
+		A5A74C1001A69447F2FD6534 /* ImmichPhotosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E066F9481DBF202E25163ADE /* ImmichPhotosApp.swift */; };
+		AAF369AAE7FE6488EF09CD09 /* CredentialsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A27D57F4C634D2F7A1EA0D9C /* CredentialsStore.swift */; };
+		CDFD8BB3E70028C6869C8A5B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CAFF95D45C181E02FEBF5E3 /* SettingsView.swift */; };
+		DAEB118EE9582363A8000085 /* ImmichModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40381BF8468122ECA5997439 /* ImmichModels.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		14A03CF4644B0A6A0BC4D7F6 /* ImmichPhotos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImmichPhotos.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1CAFF95D45C181E02FEBF5E3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		40381BF8468122ECA5997439 /* ImmichModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmichModels.swift; sourceTree = "<group>"; };
+		53BFD117AB2CE4C8BFAFFA5E /* PhotoDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailView.swift; sourceTree = "<group>"; };
+		57102B7F22DD8A1D854AC628 /* PhotoGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoGrid.swift; sourceTree = "<group>"; };
+		74959F41A5EC9BCF3CD7F7AA /* LibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryViewModel.swift; sourceTree = "<group>"; };
+		8875850509F589F1909864C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		A27D57F4C634D2F7A1EA0D9C /* CredentialsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialsStore.swift; sourceTree = "<group>"; };
+		B847E94F1C51BD2AEF138CCC /* ImmichClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmichClient.swift; sourceTree = "<group>"; };
+		D1C20657FE718DA285A6960D /* ThumbnailStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailStore.swift; sourceTree = "<group>"; };
+		E066F9481DBF202E25163ADE /* ImmichPhotosApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmichPhotosApp.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0B907D8ADF8844554042D45F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				14A03CF4644B0A6A0BC4D7F6 /* ImmichPhotos.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		29ADFA700E50421935C7333D /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				74959F41A5EC9BCF3CD7F7AA /* LibraryViewModel.swift */,
+				57102B7F22DD8A1D854AC628 /* PhotoGrid.swift */,
+				D1C20657FE718DA285A6960D /* ThumbnailStore.swift */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
+		3B09582039816407772592CA /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				40381BF8468122ECA5997439 /* ImmichModels.swift */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		4F841F960DB198D67E4139E7 /* Detail */ = {
+			isa = PBXGroup;
+			children = (
+				53BFD117AB2CE4C8BFAFFA5E /* PhotoDetailView.swift */,
+			);
+			path = Detail;
+			sourceTree = "<group>";
+		};
+		5674A7B256CBF606876D177A /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				1CAFF95D45C181E02FEBF5E3 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		8066E94CF473573C5D22BF01 /* ImmichPhotos */ = {
+			isa = PBXGroup;
+			children = (
+				E066F9481DBF202E25163ADE /* ImmichPhotosApp.swift */,
+				8875850509F589F1909864C7 /* Info.plist */,
+				3B09582039816407772592CA /* Domain */,
+				A69B59140B9D1025B6A11553 /* Features */,
+				B9685CBBADA24528B2B8923F /* Infrastructure */,
+			);
+			path = ImmichPhotos;
+			sourceTree = "<group>";
+		};
+		A69B59140B9D1025B6A11553 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				4F841F960DB198D67E4139E7 /* Detail */,
+				29ADFA700E50421935C7333D /* Library */,
+				5674A7B256CBF606876D177A /* Settings */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		B9685CBBADA24528B2B8923F /* Infrastructure */ = {
+			isa = PBXGroup;
+			children = (
+				A27D57F4C634D2F7A1EA0D9C /* CredentialsStore.swift */,
+				B847E94F1C51BD2AEF138CCC /* ImmichClient.swift */,
+			);
+			path = Infrastructure;
+			sourceTree = "<group>";
+		};
+		DB2F18BCA30A860090044EBB = {
+			isa = PBXGroup;
+			children = (
+				8066E94CF473573C5D22BF01 /* ImmichPhotos */,
+				0B907D8ADF8844554042D45F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AF6D3A33DBEF765FCEDE8C86 /* ImmichPhotos */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 871282D4FBF34FC127CACDC2 /* Build configuration list for PBXNativeTarget "ImmichPhotos" */;
+			buildPhases = (
+				D7380CBA1E8FC9F7CACC0123 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ImmichPhotos;
+			packageProductDependencies = (
+			);
+			productName = ImmichPhotos;
+			productReference = 14A03CF4644B0A6A0BC4D7F6 /* ImmichPhotos.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		43C44234B42E3E10223B11A2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2620;
+				TargetAttributes = {
+					AF6D3A33DBEF765FCEDE8C86 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 0BAB224BD455BF169C09B77F /* Build configuration list for PBXProject "ImmichPhotos" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = DB2F18BCA30A860090044EBB;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 0B907D8ADF8844554042D45F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AF6D3A33DBEF765FCEDE8C86 /* ImmichPhotos */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D7380CBA1E8FC9F7CACC0123 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AAF369AAE7FE6488EF09CD09 /* CredentialsStore.swift in Sources */,
+				68FD8B4BF663346A56ADC7A1 /* ImmichClient.swift in Sources */,
+				DAEB118EE9582363A8000085 /* ImmichModels.swift in Sources */,
+				A5A74C1001A69447F2FD6534 /* ImmichPhotosApp.swift in Sources */,
+				64A4205D57574232F365D1E7 /* LibraryViewModel.swift in Sources */,
+				874FA0895F9FD1BEF2BE39A8 /* PhotoDetailView.swift in Sources */,
+				3499C8F3F3E53DF266F00BFA /* PhotoGrid.swift in Sources */,
+				CDFD8BB3E70028C6869C8A5B /* SettingsView.swift in Sources */,
+				31582572B0D1626E437FBF98 /* ThumbnailStore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		879DC49524E94786C65D8BFB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ImmichPhotos/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.immichphotos.gallery;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		894AFD144C22D45F10950D5F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = X5Y3UBCHH3;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		AB261D5B8FF48AADFA9888BB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = X5Y3UBCHH3;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		ACB91D5D109265DEDC585368 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ImmichPhotos/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.immichphotos.gallery;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0BAB224BD455BF169C09B77F /* Build configuration list for PBXProject "ImmichPhotos" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				894AFD144C22D45F10950D5F /* Debug */,
+				AB261D5B8FF48AADFA9888BB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		871282D4FBF34FC127CACDC2 /* Build configuration list for PBXNativeTarget "ImmichPhotos" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ACB91D5D109265DEDC585368 /* Debug */,
+				879DC49524E94786C65D8BFB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 43C44234B42E3E10223B11A2 /* Project object */;
+}
