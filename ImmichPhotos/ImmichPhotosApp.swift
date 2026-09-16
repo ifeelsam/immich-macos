@@ -101,6 +101,8 @@ struct ImmichPhotosApp: App {
         } detail: {
             if case .some(.people) = route {
                 PeopleBrowser(client: client) { person in route = .person(person) }
+            } else if case .some(.places) = route {
+                PlacesBrowser(client: client) { selectedAsset = $0 }
             } else {
                 LibraryScreen(
                     model: library,
@@ -120,7 +122,7 @@ struct ImmichPhotosApp: App {
         }
         .task { await reloadConnection() }
         .onChange(of: route) { _, route in
-            guard let route, route != .people, let client = session.client else { return }
+            guard let route, route != .people, route != .places, let client = session.client else { return }
             Task { await library.load(route: route, using: client) }
         }
     }
@@ -129,7 +131,7 @@ struct ImmichPhotosApp: App {
         guard let client = session.client else { return }
         do {
             albums = try await client.albums()
-            if let route, route != .people { await library.load(route: route, using: client) }
+            if let route, route != .people, route != .places { await library.load(route: route, using: client) }
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -205,6 +207,8 @@ private struct Sidebar: View {
             Section("Discover") {
                 Label("People", systemImage: "person.2")
                     .tag(LibraryRoute.people)
+                Label("Places", systemImage: "map")
+                    .tag(LibraryRoute.places)
             }
             Section("Albums") {
                 ForEach(albums) { album in

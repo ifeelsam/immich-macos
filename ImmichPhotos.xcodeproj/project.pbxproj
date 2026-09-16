@@ -16,6 +16,7 @@
 		A5A74C1001A69447F2FD6534 /* ImmichPhotosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E066F9481DBF202E25163ADE /* ImmichPhotosApp.swift */; };
 		AAF369AAE7FE6488EF09CD09 /* CredentialsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A27D57F4C634D2F7A1EA0D9C /* CredentialsStore.swift */; };
 		CDFD8BB3E70028C6869C8A5B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CAFF95D45C181E02FEBF5E3 /* SettingsView.swift */; };
+		D66F8A966F2901225245179E /* PlacesBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2534570B9FC1C1BE97DAF5AE /* PlacesBrowser.swift */; };
 		DAEB118EE9582363A8000085 /* ImmichModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40381BF8468122ECA5997439 /* ImmichModels.swift */; };
 /* End PBXBuildFile section */
 
@@ -23,6 +24,7 @@
 		0032A108D5452B7759A21BB5 /* PeopleBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleBrowser.swift; sourceTree = "<group>"; };
 		14A03CF4644B0A6A0BC4D7F6 /* ImmichPhotos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImmichPhotos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CAFF95D45C181E02FEBF5E3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		2534570B9FC1C1BE97DAF5AE /* PlacesBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesBrowser.swift; sourceTree = "<group>"; };
 		40381BF8468122ECA5997439 /* ImmichModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmichModels.swift; sourceTree = "<group>"; };
 		53BFD117AB2CE4C8BFAFFA5E /* PhotoDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailView.swift; sourceTree = "<group>"; };
 		57102B7F22DD8A1D854AC628 /* PhotoGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoGrid.swift; sourceTree = "<group>"; };
@@ -103,9 +105,18 @@
 				4F841F960DB198D67E4139E7 /* Detail */,
 				29ADFA700E50421935C7333D /* Library */,
 				3FB6E5E057DBCD79FC543648 /* People */,
+				AF241E0C5CB42804425436F1 /* Places */,
 				5674A7B256CBF606876D177A /* Settings */,
 			);
 			path = Features;
+			sourceTree = "<group>";
+		};
+		AF241E0C5CB42804425436F1 /* Places */ = {
+			isa = PBXGroup;
+			children = (
+				2534570B9FC1C1BE97DAF5AE /* PlacesBrowser.swift */,
+			);
+			path = Places;
 			sourceTree = "<group>";
 		};
 		B9685CBBADA24528B2B8923F /* Infrastructure */ = {
@@ -191,6 +202,7 @@
 				3C68C21A3BA44C5317E005D1 /* PeopleBrowser.swift in Sources */,
 				874FA0895F9FD1BEF2BE39A8 /* PhotoDetailView.swift in Sources */,
 				3499C8F3F3E53DF266F00BFA /* PhotoGrid.swift in Sources */,
+				D66F8A966F2901225245179E /* PlacesBrowser.swift in Sources */,
 				CDFD8BB3E70028C6869C8A5B /* SettingsView.swift in Sources */,
 				31582572B0D1626E437FBF98 /* ThumbnailStore.swift in Sources */,
 			);

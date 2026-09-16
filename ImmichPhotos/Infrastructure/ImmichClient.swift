@@ -73,6 +73,8 @@ struct ImmichClient: Sendable {
             body["visibility"] = "timeline"
         case .people:
             throw ClientError.invalidResponse
+        case .places:
+            throw ClientError.invalidResponse
         case .album(let album):
             body["albumIds"] = [album.id]
         }
@@ -92,6 +94,27 @@ struct ImmichClient: Sendable {
         let (data, response) = try await URLSession.shared.data(for: request("people/\(id)/thumbnail"))
         try validate(response, accepted: 200...299)
         return data
+    }
+
+    /// A bounded map feed. It intentionally loads only the newest 540 timeline assets
+    /// with EXIF data rather than materializing a large server library in memory.
+    func locationAssets() async throws -> [ImmichAsset] {
+        var collected: [ImmichAsset] = []
+        var page = 1
+        for _ in 0..<3 {
+            let result = try await search([
+                "visibility": "timeline",
+                "withExif": true,
+                "page": page,
+                "size": 180,
+                "order": "desc",
+                "withDeleted": false,
+            ])
+            collected.append(contentsOf: result.assets)
+            guard let next = result.nextPage else { break }
+            page = next
+        }
+        return collected
     }
 
     func thumbnail(id: String, preview: Bool = false) async throws -> Data {

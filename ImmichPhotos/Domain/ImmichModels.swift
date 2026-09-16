@@ -35,6 +35,8 @@ struct ImmichExif: Codable, Hashable, Sendable {
     let state: String?
     let country: String?
     let fileSizeInByte: Int?
+    let latitude: Double?
+    let longitude: Double?
 
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
@@ -42,6 +44,8 @@ struct ImmichExif: Codable, Hashable, Sendable {
         state = values.flexibleString(forKey: .state)
         country = values.flexibleString(forKey: .country)
         fileSizeInByte = values.flexibleInt(forKey: .fileSizeInByte)
+        latitude = values.flexibleDouble(forKey: .latitude)
+        longitude = values.flexibleDouble(forKey: .longitude)
     }
 }
 
@@ -66,6 +70,13 @@ private extension KeyedDecodingContainer {
         if let value = try? decodeIfPresent(Int.self, forKey: key) { return value }
         if let value = try? decodeIfPresent(String.self, forKey: key) { return Int(value) }
         if let value = try? decodeIfPresent(Double.self, forKey: key) { return Int(value) }
+        return nil
+    }
+
+    func flexibleDouble(forKey key: Key) -> Double? {
+        if let value = try? decodeIfPresent(Double.self, forKey: key) { return value }
+        if let value = try? decodeIfPresent(Int.self, forKey: key) { return Double(value) }
+        if let value = try? decodeIfPresent(String.self, forKey: key) { return Double(value) }
         return nil
     }
 }
@@ -106,6 +117,7 @@ enum LibraryRoute: Hashable, Identifiable {
     case archived
     case locked
     case people
+    case places
     case person(ImmichPerson)
     case album(ImmichAlbum)
 
@@ -117,6 +129,7 @@ enum LibraryRoute: Hashable, Identifiable {
         case .archived: "archived"
         case .locked: "locked"
         case .people: "people"
+        case .places: "places"
         case .person(let person): "person-\(person.id)"
         case .album(let album): "album-\(album.id)"
         }
@@ -130,6 +143,7 @@ enum LibraryRoute: Hashable, Identifiable {
         case .archived: "Archived"
         case .locked: "Locked"
         case .people: "People"
+        case .places: "Places"
         case .person(let person): person.displayName
         case .album(let album): album.albumName
         }
