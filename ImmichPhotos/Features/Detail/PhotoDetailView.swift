@@ -1,6 +1,7 @@
 import SwiftUI
 import AVKit
 import AVFoundation
+import AppKit
 
 struct PhotoDetailView: View {
     let asset: ImmichAsset
@@ -37,40 +38,11 @@ struct PhotoDetailView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color(nsColor: .windowBackgroundColor).ignoresSafeArea()
             content
         }
-        .overlay(alignment: .topLeading) {
-            Button(action: onClose) {
-                Label("Back", systemImage: "chevron.left")
-            }
-            .buttonStyle(OverlayButtonStyle())
-            .keyboardShortcut(.cancelAction)
-            .padding(18)
-        }
-        .overlay(alignment: .topTrailing) {
-            HStack(spacing: 8) {
-                Button { toggleFavorite() } label: {
-                    Label(currentAsset.isFavorite == true ? "Unfavorite" : "Favorite", systemImage: currentAsset.isFavorite == true ? "heart.fill" : "heart")
-                }
-                Button { toggleArchived() } label: {
-                    Label(currentAsset.isArchived == true ? "Unarchive" : "Archive", systemImage: currentAsset.isArchived == true ? "tray.and.arrow.up.fill" : "archivebox")
-                }
-                Button(action: saveOriginal) {
-                    Label("Download", systemImage: "arrow.down.circle")
-                }
-                Menu {
-                    Button("Delete from Immich", role: .destructive) { onDelete(currentAsset.id) }
-                } label: {
-                    Label("More", systemImage: "ellipsis")
-                }
-            }
-            .buttonStyle(OverlayButtonStyle())
-            .disabled(isMutating)
-            .padding(18)
-        }
-        .overlay(alignment: .bottom) {
-            VStack(spacing: 6) {
+        .safeAreaInset(edge: .bottom) {
+            VStack(spacing: 3) {
                 Text(currentAsset.originalFileName)
                     .font(.callout.weight(.medium))
                 if let date = currentAsset.createdDate {
@@ -85,11 +57,38 @@ struct PhotoDetailView: View {
                 }
             }
             .multilineTextAlignment(.center)
-            .foregroundStyle(.white)
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
-            .background(.black.opacity(0.48), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-            .padding(20)
+            .frame(maxWidth: .infinity)
+            .background(.bar)
+        }
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button(action: onClose) {
+                    Label("Back to \(asset.originalFileName)", systemImage: "chevron.left")
+                }
+                .keyboardShortcut(.cancelAction)
+            }
+            ToolbarItemGroup(placement: .primaryAction) {
+                Button { toggleFavorite() } label: {
+                    Label(currentAsset.isFavorite == true ? "Unfavorite" : "Favorite", systemImage: currentAsset.isFavorite == true ? "heart.fill" : "heart")
+                }
+                .disabled(isMutating)
+                Button { toggleArchived() } label: {
+                    Label(currentAsset.isArchived == true ? "Unarchive" : "Archive", systemImage: currentAsset.isArchived == true ? "tray.and.arrow.up.fill" : "archivebox")
+                }
+                .disabled(isMutating)
+                Button(action: saveOriginal) {
+                    Label("Download", systemImage: "arrow.down.circle")
+                }
+                .disabled(isMutating)
+                Menu {
+                    Button("Delete from Immich", role: .destructive) { onDelete(currentAsset.id) }
+                } label: {
+                    Label("More", systemImage: "ellipsis")
+                }
+                .disabled(isMutating)
+            }
         }
         .focusable()
         .focused($hasFocus)
@@ -106,17 +105,15 @@ struct PhotoDetailView: View {
     @ViewBuilder private var content: some View {
         if let player {
             NativePlayer(player: player)
-                .ignoresSafeArea()
         } else if let image {
             Image(nsImage: image)
                 .resizable()
                 .scaledToFit()
                 .padding(38)
         } else if isLoading {
-            ProgressView().tint(.white)
+            ProgressView()
         } else {
             ContentUnavailableView("Couldn’t Load Photo", systemImage: "exclamationmark.triangle")
-                .foregroundStyle(.white)
         }
     }
 
@@ -179,17 +176,6 @@ struct PhotoDetailView: View {
             do { try await client.downloadOriginal(id: currentAsset.id).write(to: destination, options: .atomic) }
             catch { errorMessage = error.localizedDescription }
         }
-    }
-}
-
-private struct OverlayButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .labelStyle(.iconOnly)
-            .frame(width: 40, height: 40)
-            .background(.black.opacity(configuration.isPressed ? 0.72 : 0.48), in: Circle())
-            .foregroundStyle(.white)
-            .contentShape(Circle())
     }
 }
 

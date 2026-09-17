@@ -37,22 +37,6 @@ struct ImmichPhotosApp: App {
                     Task { await createAlbum(named: name) }
                 }
             }
-            .sheet(item: $selectedAsset) { asset in
-                if let client = session.client {
-                    PhotoDetailView(
-                        asset: asset,
-                        client: client,
-                        thumbnails: thumbnails,
-                        onClose: { selectedAsset = nil },
-                        onUpdated: { updated in library.replace(updated) },
-                        onDelete: { id in
-                            selectedAsset = nil
-                            pendingDelete = [id]
-                        }
-                    )
-                    .frame(minWidth: 900, minHeight: 650)
-                }
-            }
             .fileImporter(
                 isPresented: $showImporter,
                 allowedContentTypes: [.image, .movie],
@@ -99,7 +83,19 @@ struct ImmichPhotosApp: App {
             Sidebar(route: $route, albums: albums)
                 .navigationSplitViewColumnWidth(min: 190, ideal: 220, max: 280)
         } detail: {
-            if case .some(.people) = route {
+            if let asset = selectedAsset {
+                PhotoDetailView(
+                    asset: asset,
+                    client: client,
+                    thumbnails: thumbnails,
+                    onClose: { selectedAsset = nil },
+                    onUpdated: { updated in library.replace(updated) },
+                    onDelete: { id in
+                        selectedAsset = nil
+                        pendingDelete = [id]
+                    }
+                )
+            } else if case .some(.people) = route {
                 PeopleBrowser(client: client) { person in route = .person(person) }
             } else if case .some(.places) = route {
                 PlacesBrowser(client: client) { selectedAsset = $0 }
@@ -124,6 +120,7 @@ struct ImmichPhotosApp: App {
         }
         .task { await reloadConnection() }
         .onChange(of: route) { _, route in
+            selectedAsset = nil
             guard let route, route != .people, route != .places, route != .locked,
                   let client = session.client else { return }
             Task { await library.load(route: route, using: client) }
