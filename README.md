@@ -12,6 +12,13 @@ familiar macOS Photos workflow rather than a Finder integration.
 - Secure API-key storage in macOS Keychain; server address is stored separately in UserDefaults.
 - Clear empty, loading, error, and destructive-action confirmation states.
 
+## Locked photos
+
+Immich intentionally returns HTTP 401 for locked assets requested with an API key,
+regardless of that key's scopes. Its PIN unlock endpoint accepts only a signed-in
+browser/session token. The app therefore shows a dedicated Locked screen and opens
+Immich for the secure unlock; it never asks for or stores a Locked-folder PIN.
+
 The API layer follows the supplied desktop reference's Immich v1.135+ contract:
 `POST /search/metadata`, thumbnail `preview`/`thumbnail` renditions, and the
 current asset/album mutation endpoints.

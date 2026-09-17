@@ -103,6 +103,8 @@ struct ImmichPhotosApp: App {
                 PeopleBrowser(client: client) { person in route = .person(person) }
             } else if case .some(.places) = route {
                 PlacesBrowser(client: client) { selectedAsset = $0 }
+            } else if case .some(.locked) = route {
+                LockedCollectionView(serverURL: session.serverURL)
             } else {
                 LibraryScreen(
                     model: library,
@@ -122,7 +124,8 @@ struct ImmichPhotosApp: App {
         }
         .task { await reloadConnection() }
         .onChange(of: route) { _, route in
-            guard let route, route != .people, route != .places, let client = session.client else { return }
+            guard let route, route != .people, route != .places, route != .locked,
+                  let client = session.client else { return }
             Task { await library.load(route: route, using: client) }
         }
     }
@@ -131,7 +134,9 @@ struct ImmichPhotosApp: App {
         guard let client = session.client else { return }
         do {
             albums = try await client.albums()
-            if let route, route != .people, route != .places { await library.load(route: route, using: client) }
+            if let route, route != .people, route != .places, route != .locked {
+                await library.load(route: route, using: client)
+            }
         } catch {
             errorMessage = error.localizedDescription
         }

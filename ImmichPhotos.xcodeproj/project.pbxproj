@@ -15,6 +15,7 @@
 		874FA0895F9FD1BEF2BE39A8 /* PhotoDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BFD117AB2CE4C8BFAFFA5E /* PhotoDetailView.swift */; };
 		A5A74C1001A69447F2FD6534 /* ImmichPhotosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E066F9481DBF202E25163ADE /* ImmichPhotosApp.swift */; };
 		AAF369AAE7FE6488EF09CD09 /* CredentialsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A27D57F4C634D2F7A1EA0D9C /* CredentialsStore.swift */; };
+		C083467E3577F6D58B01EC93 /* LockedCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A7384BEF963929CD3F390E /* LockedCollectionView.swift */; };
 		CDFD8BB3E70028C6869C8A5B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CAFF95D45C181E02FEBF5E3 /* SettingsView.swift */; };
 		D66F8A966F2901225245179E /* PlacesBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2534570B9FC1C1BE97DAF5AE /* PlacesBrowser.swift */; };
 		DAEB118EE9582363A8000085 /* ImmichModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40381BF8468122ECA5997439 /* ImmichModels.swift */; };
@@ -34,6 +35,7 @@
 		B847E94F1C51BD2AEF138CCC /* ImmichClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmichClient.swift; sourceTree = "<group>"; };
 		D1C20657FE718DA285A6960D /* ThumbnailStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailStore.swift; sourceTree = "<group>"; };
 		E066F9481DBF202E25163ADE /* ImmichPhotosApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmichPhotosApp.swift; sourceTree = "<group>"; };
+		F6A7384BEF963929CD3F390E /* LockedCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockedCollectionView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -104,11 +106,20 @@
 			children = (
 				4F841F960DB198D67E4139E7 /* Detail */,
 				29ADFA700E50421935C7333D /* Library */,
+				AA24DDA1CAAC336073AA3EEB /* Locked */,
 				3FB6E5E057DBCD79FC543648 /* People */,
 				AF241E0C5CB42804425436F1 /* Places */,
 				5674A7B256CBF606876D177A /* Settings */,
 			);
 			path = Features;
+			sourceTree = "<group>";
+		};
+		AA24DDA1CAAC336073AA3EEB /* Locked */ = {
+			isa = PBXGroup;
+			children = (
+				F6A7384BEF963929CD3F390E /* LockedCollectionView.swift */,
+			);
+			path = Locked;
 			sourceTree = "<group>";
 		};
 		AF241E0C5CB42804425436F1 /* Places */ = {
@@ -199,6 +210,7 @@
 				DAEB118EE9582363A8000085 /* ImmichModels.swift in Sources */,
 				A5A74C1001A69447F2FD6534 /* ImmichPhotosApp.swift in Sources */,
 				64A4205D57574232F365D1E7 /* LibraryViewModel.swift in Sources */,
+				C083467E3577F6D58B01EC93 /* LockedCollectionView.swift in Sources */,
 				3C68C21A3BA44C5317E005D1 /* PeopleBrowser.swift in Sources */,
 				874FA0895F9FD1BEF2BE39A8 /* PhotoDetailView.swift in Sources */,
 				3499C8F3F3E53DF266F00BFA /* PhotoGrid.swift in Sources */,
