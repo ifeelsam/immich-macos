@@ -296,12 +296,12 @@ private struct LibraryScreen: View {
                 gridSizeControls
 
                 Menu {
-                    Text(model.route.title).disabled(true)
+                    Text(collectionMenuTitle).disabled(true)
                     Divider()
                     Button("Newest First") { Task { await model.refresh(using: client) } }
                     Button("Refresh") { Task { await model.refresh(using: client) } }
                 } label: {
-                    Label(model.route.title, systemImage: "chevron.up.chevron.down")
+                    Label(collectionMenuTitle, systemImage: "chevron.up.chevron.down")
                 }
 
                 if model.selectionMode {
@@ -362,5 +362,9 @@ private struct LibraryScreen: View {
         formatter.dateStyle = .medium
         formatter.timeStyle = .none
         return formatter.string(from: first, to: last)
+    }
+
+    private var collectionMenuTitle: String {
+        model.route == .library ? "All Photos" : model.route.title
     }
 }
