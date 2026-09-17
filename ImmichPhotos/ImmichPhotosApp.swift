@@ -239,16 +239,20 @@ private struct LibraryScreen: View {
     let onDelete: () -> Void
 
     var body: some View {
-        Group {
+        VStack(spacing: 0) {
+            libraryHeader
+            Divider()
             switch model.phase {
             case .idle, .loading:
                 ProgressView("Loading \(model.route.title)…")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             case .empty:
                 ContentUnavailableView(
                     "No Items",
                     systemImage: "photo.on.rectangle.angled",
                     description: Text("Import photos or choose another library view.")
                 )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             case .failed(let message):
                 ContentUnavailableView {
                     Label("Couldn’t Load Photos", systemImage: "exclamationmark.triangle")
@@ -257,6 +261,7 @@ private struct LibraryScreen: View {
                 } actions: {
                     Button("Try Again") { Task { await model.refresh(using: client) } }
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             case .loaded:
                 PhotoGrid(
                     sections: model.displayedSections,
@@ -274,55 +279,95 @@ private struct LibraryScreen: View {
                 }
             }
         }
-        .navigationTitle(model.route.title)
         .searchable(text: $model.searchText, prompt: "Search loaded photos")
-        .toolbar {
-            ToolbarItemGroup(placement: .primaryAction) {
-                if model.selectionMode {
-                    Text("\(model.selectedIDs.count) Selected")
-                        .monospacedDigit()
-                    Menu {
-                        Button("New Album…", action: onCreateAlbum)
-                            .disabled(model.selectedIDs.isEmpty)
-                        if !albums.isEmpty {
-                            Menu("Add to Album") {
-                                ForEach(albums) { album in
-                                    Button(album.albumName) { onAddToAlbum(album) }
-                                }
-                            }
-                            .disabled(model.selectedIDs.isEmpty)
-                        }
-                        Divider()
-                        Button("Delete from Immich", role: .destructive, action: onDelete)
-                            .disabled(model.selectedIDs.isEmpty)
-                    } label: {
-                        Label("Actions", systemImage: "ellipsis.circle")
-                    }
-                    Button("Done") { model.clearSelection() }
-                } else {
-                    Button { model.selectionMode = true } label: {
-                        Label("Select", systemImage: "checkmark.circle")
-                    }
-                }
-                Menu {
-                    Slider(value: $gridSize, in: 100...260, step: 10) {
-                        Text("Photo size")
-                    }
-                    .frame(width: 180)
-                } label: {
-                    Label("Grid Size", systemImage: "rectangle.grid.3x2")
-                }
-                Button { onImport() } label: {
-                    Label(isUploading ? "Importing…" : "Import", systemImage: "square.and.arrow.down")
-                }
-                .disabled(isUploading)
-                Button { Task { await model.refresh(using: client) } } label: {
-                    Label("Refresh", systemImage: "arrow.clockwise")
-                }
-                Button(action: onSettings) {
-                    Label("Settings", systemImage: "gearshape")
+    }
+
+    private var libraryHeader: some View {
+        HStack(spacing: 16) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(model.route.title)
+                    .font(.title2.weight(.bold))
+                if let dateRange {
+                    Text(dateRange)
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
                 }
             }
+            .frame(minWidth: 190, alignment: .leading)
+
+            Spacer(minLength: 12)
+
+            ControlGroup {
+                Button { gridSize = max(100, gridSize - 10) } label: {
+                    Label("Smaller Photos", systemImage: "minus")
+                }
+                .disabled(gridSize <= 100)
+                Button { gridSize = min(260, gridSize + 10) } label: {
+                    Label("Larger Photos", systemImage: "plus")
+                }
+                .disabled(gridSize >= 260)
+            }
+            .controlSize(.large)
+
+            Menu {
+                Text(model.route.title).disabled(true)
+                Divider()
+                Button("Newest First") { Task { await model.refresh(using: client) } }
+                Button("Refresh") { Task { await model.refresh(using: client) } }
+            } label: {
+                Label(model.route.title, systemImage: "chevron.up.chevron.down")
+            }
+            .menuStyle(.borderlessButton)
+            .controlSize(.large)
+
+            if model.selectionMode {
+                Text("\(model.selectedIDs.count) Selected")
+                    .font(.callout.monospacedDigit())
+                Menu {
+                    Button("New Album…", action: onCreateAlbum)
+                        .disabled(model.selectedIDs.isEmpty)
+                    if !albums.isEmpty {
+                        Menu("Add to Album") {
+                            ForEach(albums) { album in
+                                Button(album.albumName) { onAddToAlbum(album) }
+                            }
+                        }
+                        .disabled(model.selectedIDs.isEmpty)
+                    }
+                    Divider()
+                    Button("Delete from Immich", role: .destructive, action: onDelete)
+                        .disabled(model.selectedIDs.isEmpty)
+                } label: {
+                    Label("Selection Actions", systemImage: "ellipsis")
+                }
+                Button("Done") { model.clearSelection() }
+            } else {
+                Button("Select") { model.selectionMode = true }
+            }
+
+            Menu {
+                Button(isUploading ? "Importing…" : "Import Photos…", action: onImport)
+                    .disabled(isUploading)
+                Button("Refresh Library") { Task { await model.refresh(using: client) } }
+                Divider()
+                Button("Settings…", action: onSettings)
+            } label: {
+                Label("More", systemImage: "ellipsis")
+            }
+            .menuStyle(.borderlessButton)
+            .controlSize(.large)
         }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+        .background(.bar)
+    }
+
+    private var dateRange: String? {
+        let dates = model.assets.compactMap(\.createdDate)
+        guard let first = dates.min(), let last = dates.max() else { return nil }
+        let formatter = DateIntervalFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        return formatter.string(from: first, to: last)
     }
 }
