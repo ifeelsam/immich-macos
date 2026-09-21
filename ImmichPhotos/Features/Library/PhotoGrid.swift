@@ -17,8 +17,8 @@ struct PhotoGrid: View {
                 ForEach(sections) { section in
                     Section {
                         LazyVGrid(
-                            columns: [GridItem(.adaptive(minimum: gridSize), spacing: 3)],
-                            spacing: 3
+                            columns: [GridItem(.adaptive(minimum: gridSize), spacing: 2)],
+                            spacing: 2
                         ) {
                             ForEach(section.assets) { asset in
                                 AssetTile(
@@ -36,12 +36,12 @@ struct PhotoGrid: View {
                         }
                     } header: {
                         Text(section.title)
-                            .font(.title3.weight(.bold))
+                            .font(.title3.weight(.semibold))
                             .padding(.horizontal, 20)
                             .padding(.top, 12)
                             .padding(.bottom, 8)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(.regularMaterial)
+                            .background(.bar)
                     }
                 }
             }
@@ -109,7 +109,11 @@ private struct AssetTile: View {
             .overlay {
                 if isSelected {
                     RoundedRectangle(cornerRadius: 4, style: .continuous)
-                        .stroke(.blue, lineWidth: 3)
+                        .strokeBorder(.white, lineWidth: 2)
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 4, style: .continuous)
+                                .strokeBorder(Color.accentColor, lineWidth: 4)
+                        }
                 }
             }
         }

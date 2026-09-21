@@ -76,13 +76,13 @@ struct ImmichPhotosApp: App {
                 .keyboardShortcut("r", modifiers: .command)
             }
         }
-        .windowToolbarStyle(.unifiedCompact(showsTitle: false))
+        .windowToolbarStyle(.unified(showsTitle: false))
     }
 
     @ViewBuilder private func gallery(client: ImmichClient) -> some View {
         NavigationSplitView {
             Sidebar(route: $route, albums: albums)
-                .navigationSplitViewColumnWidth(min: 190, ideal: 220, max: 280)
+                .navigationSplitViewColumnWidth(min: 200, ideal: 240, max: 300)
         } detail: {
             if let asset = selectedAsset {
                 PhotoDetailView(
@@ -119,6 +119,7 @@ struct ImmichPhotosApp: App {
                 )
             }
         }
+        .navigationSplitViewStyle(.balanced)
         .task { await reloadConnection() }
         .onChange(of: route) { _, route in
             selectedAsset = nil
@@ -195,12 +196,12 @@ private struct Sidebar: View {
 
     var body: some View {
         List(selection: $route) {
-            Section("Library") {
-                Label("Library", systemImage: "photo.on.rectangle.angled")
+            Section {
+                Label("Library", systemImage: "photo.on.rectangle")
                     .tag(LibraryRoute.library)
                 Label("Favorites", systemImage: "heart")
                     .tag(LibraryRoute.favorites)
-                Label("Videos", systemImage: "play.rectangle")
+                Label("Videos", systemImage: "play.square")
                     .tag(LibraryRoute.videos)
                 Label("Archived", systemImage: "archivebox")
                     .tag(LibraryRoute.archived)
@@ -277,13 +278,12 @@ private struct LibraryScreen: View {
                 }
             }
         }
-        .navigationTitle(model.route.title)
-        .searchable(text: $model.searchText, prompt: "Search loaded photos")
+        .searchable(text: $model.searchText, placement: .toolbar, prompt: "Search loaded photos")
         .toolbar {
             ToolbarItem(placement: .navigation) {
-                VStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .leading, spacing: 2) {
                     Text(model.route.title)
-                        .font(.headline)
+                        .font(.title2.weight(.bold))
                     if let dateRange {
                         Text(dateRange)
                             .font(.caption)
@@ -296,47 +296,56 @@ private struct LibraryScreen: View {
                 gridSizeControls
 
                 Menu {
-                    Text(collectionMenuTitle).disabled(true)
-                    Divider()
                     Button("Newest First") { Task { await model.refresh(using: client) } }
                     Button("Refresh") { Task { await model.refresh(using: client) } }
                 } label: {
-                    Label(collectionMenuTitle, systemImage: "chevron.up.chevron.down")
-                }
-
-                if model.selectionMode {
-                    Text("\(model.selectedIDs.count) Selected")
-                        .font(.callout.monospacedDigit())
-                    Menu {
-                        Button("New Album…", action: onCreateAlbum)
-                            .disabled(model.selectedIDs.isEmpty)
-                        if !albums.isEmpty {
-                            Menu("Add to Album") {
-                                ForEach(albums) { album in
-                                    Button(album.albumName) { onAddToAlbum(album) }
-                                }
-                            }
-                            .disabled(model.selectedIDs.isEmpty)
-                        }
-                        Divider()
-                        Button("Delete from Immich", role: .destructive, action: onDelete)
-                            .disabled(model.selectedIDs.isEmpty)
-                    } label: {
-                        Label("Selection Actions", systemImage: "ellipsis")
+                    HStack(spacing: 4) {
+                        Text(collectionMenuTitle)
+                        Image(systemName: "chevron.up.chevron.down")
+                            .imageScale(.small)
                     }
-                    Button("Done") { model.clearSelection() }
-                } else {
-                    Button("Select") { model.selectionMode = true }
                 }
 
-                Menu {
-                    Button(isUploading ? "Importing…" : "Import Photos…", action: onImport)
-                        .disabled(isUploading)
-                    Button("Refresh Library") { Task { await model.refresh(using: client) } }
-                    Divider()
-                    Button("Settings…", action: onSettings)
+                ControlGroup {
+                    Button { } label: {
+                        Image(systemName: "rectangle.arrowtriangle.2.outward")
+                    }
+                    Button { } label: {
+                        Image(systemName: "line.3.horizontal")
+                    }
+                    Menu {
+                        if model.selectionMode {
+                            Button("New Album…", action: onCreateAlbum)
+                                .disabled(model.selectedIDs.isEmpty)
+                            if !albums.isEmpty {
+                                Menu("Add to Album") {
+                                    ForEach(albums) { album in
+                                        Button(album.albumName) { onAddToAlbum(album) }
+                                    }
+                                }
+                                .disabled(model.selectedIDs.isEmpty)
+                            }
+                            Divider()
+                            Button("Delete from Immich", role: .destructive, action: onDelete)
+                                .disabled(model.selectedIDs.isEmpty)
+                            Divider()
+                        }
+                        Button(model.selectionMode ? "Done Selecting" : "Select Photos") { model.selectionMode.toggle() }
+                        Divider()
+                        Button(isUploading ? "Importing…" : "Import Photos…", action: onImport)
+                            .disabled(isUploading)
+                        Button("Refresh Library") { Task { await model.refresh(using: client) } }
+                        Divider()
+                        Button("Settings…", action: onSettings)
+                    } label: {
+                        Image(systemName: "ellipsis")
+                    }
+                }
+
+                Button {
+                    // Placeholder for play/slideshow action
                 } label: {
-                    Label("More", systemImage: "ellipsis")
+                    Image(systemName: "chevron.forward.2")
                 }
             }
         }
@@ -345,11 +354,11 @@ private struct LibraryScreen: View {
     private var gridSizeControls: some View {
         ControlGroup {
             Button { gridSize = max(100, gridSize - 10) } label: {
-                Label("Smaller Photos", systemImage: "minus")
+                Image(systemName: "minus")
             }
             .disabled(gridSize <= 100)
             Button { gridSize = min(260, gridSize + 10) } label: {
-                Label("Larger Photos", systemImage: "plus")
+                Image(systemName: "plus")
             }
             .disabled(gridSize >= 260)
         }
