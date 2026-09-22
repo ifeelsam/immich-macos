@@ -13,35 +13,25 @@ struct PhotoGrid: View {
 
     var body: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 20, pinnedViews: [.sectionHeaders]) {
+            LazyVStack(alignment: .leading, spacing: 2) {
                 ForEach(sections) { section in
-                    Section {
-                        LazyVGrid(
-                            columns: [GridItem(.adaptive(minimum: gridSize), spacing: 2)],
-                            spacing: 2
-                        ) {
-                            ForEach(section.assets) { asset in
-                                AssetTile(
-                                    asset: asset,
-                                    isSelected: selectedIDs.contains(asset.id),
-                                    selectionMode: selectionMode,
-                                    client: client,
-                                    thumbnails: thumbnails
-                                ) {
-                                    if selectionMode { onToggleSelection(asset) }
-                                    else { onOpen(asset) }
-                                }
-                                .onAppear { onNearEnd(asset) }
+                    LazyVGrid(
+                        columns: [GridItem(.adaptive(minimum: gridSize), spacing: 2)],
+                        spacing: 2
+                    ) {
+                        ForEach(section.assets) { asset in
+                            AssetTile(
+                                asset: asset,
+                                isSelected: selectedIDs.contains(asset.id),
+                                selectionMode: selectionMode,
+                                client: client,
+                                thumbnails: thumbnails
+                            ) {
+                                if selectionMode { onToggleSelection(asset) }
+                                else { onOpen(asset) }
                             }
+                            .onAppear { onNearEnd(asset) }
                         }
-                    } header: {
-                        Text(section.title)
-                            .font(.title3.weight(.semibold))
-                            .padding(.horizontal, 20)
-                            .padding(.top, 12)
-                            .padding(.bottom, 8)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(.bar)
                     }
                 }
             }

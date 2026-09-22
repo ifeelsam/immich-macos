@@ -84,40 +84,43 @@ struct ImmichPhotosApp: App {
             Sidebar(route: $route, albums: albums)
                 .navigationSplitViewColumnWidth(min: 200, ideal: 240, max: 300)
         } detail: {
-            if let asset = selectedAsset {
-                PhotoDetailView(
-                    asset: asset,
-                    client: client,
-                    thumbnails: thumbnails,
-                    onClose: { selectedAsset = nil },
-                    onUpdated: { updated in library.replace(updated) },
-                    onDelete: { id in
-                        selectedAsset = nil
-                        pendingDelete = [id]
-                    }
-                )
-            } else if case .some(.people) = route {
-                PeopleBrowser(client: client) { person in route = .person(person) }
-            } else if case .some(.places) = route {
-                PlacesBrowser(client: client) { selectedAsset = $0 }
-            } else if case .some(.locked) = route {
-                LockedCollectionView(serverURL: session.serverURL)
-            } else {
-                LibraryScreen(
-                    model: library,
-                    client: client,
-                    thumbnails: thumbnails,
-                    gridSize: $gridSize,
-                    albums: albums,
-                    isUploading: isUploading,
-                    onOpen: { selectedAsset = $0 },
-                    onSettings: { showSettings = true },
-                    onImport: { showImporter = true },
-                    onCreateAlbum: { showNewAlbum = true },
-                    onAddToAlbum: { album in Task { await addSelection(to: album) } },
-                    onDelete: { pendingDelete = Set(library.selectedAssets.map(\.id)) }
-                )
+            Group {
+                if let asset = selectedAsset {
+                    PhotoDetailView(
+                        asset: asset,
+                        client: client,
+                        thumbnails: thumbnails,
+                        onClose: { selectedAsset = nil },
+                        onUpdated: { updated in library.replace(updated) },
+                        onDelete: { id in
+                            selectedAsset = nil
+                            pendingDelete = [id]
+                        }
+                    )
+                } else if case .some(.people) = route {
+                    PeopleBrowser(client: client) { person in route = .person(person) }
+                } else if case .some(.places) = route {
+                    PlacesBrowser(client: client) { selectedAsset = $0 }
+                } else if case .some(.locked) = route {
+                    LockedCollectionView(serverURL: session.serverURL)
+                } else {
+                    LibraryScreen(
+                        model: library,
+                        client: client,
+                        thumbnails: thumbnails,
+                        gridSize: $gridSize,
+                        albums: albums,
+                        isUploading: isUploading,
+                        onOpen: { selectedAsset = $0 },
+                        onSettings: { showSettings = true },
+                        onImport: { showImporter = true },
+                        onCreateAlbum: { showNewAlbum = true },
+                        onAddToAlbum: { album in Task { await addSelection(to: album) } },
+                        onDelete: { pendingDelete = Set(library.selectedAssets.map(\.id)) }
+                    )
+                }
             }
+            .background(.regularMaterial)
         }
         .navigationSplitViewStyle(.balanced)
         .task { await reloadConnection() }
@@ -278,7 +281,7 @@ private struct LibraryScreen: View {
                 }
             }
         }
-        .searchable(text: $model.searchText, placement: .toolbar, prompt: "Search loaded photos")
+        .searchable(text: $model.searchText, placement: .toolbar, prompt: "Search")
         .toolbar {
             ToolbarItem(placement: .navigation) {
                 VStack(alignment: .leading, spacing: 2) {
@@ -342,11 +345,15 @@ private struct LibraryScreen: View {
                     }
                 }
 
-                Button {
-                    // Placeholder for play/slideshow action
+                Menu {
+                    Button(action: {}) { Label("Info", systemImage: "info.circle") }
+                    Button(action: {}) { Label("Share", systemImage: "square.and.arrow.up") }
+                    Button(action: {}) { Label("Favourite", systemImage: "heart") }
+                    Button(action: {}) { Label("Rotate", systemImage: "rotate.right") }
                 } label: {
                     Image(systemName: "chevron.forward.2")
                 }
+                .menuIndicator(.hidden)
             }
         }
     }
@@ -366,11 +373,10 @@ private struct LibraryScreen: View {
 
     private var dateRange: String? {
         let dates = model.assets.compactMap(\.createdDate)
-        guard let first = dates.min(), let last = dates.max() else { return nil }
-        let formatter = DateIntervalFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .none
-        return formatter.string(from: first, to: last)
+        guard let latest = dates.max() else { return nil }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "d MMM yyyy"
+        return formatter.string(from: latest)
     }
 
     private var collectionMenuTitle: String {
