@@ -281,7 +281,7 @@ private struct LibraryScreen: View {
                 }
             }
         }
-        .searchable(text: $model.searchText, placement: .toolbar, prompt: "Search")
+        .modifier(CollapsibleSearchModifier(isExpanded: $isSearchExpanded, text: $model.searchText))
         .toolbar {
             ToolbarItem(placement: .navigation) {
                 VStack(alignment: .leading, spacing: 2) {
@@ -381,5 +381,18 @@ private struct LibraryScreen: View {
 
     private var collectionMenuTitle: String {
         model.route == .library ? "All Photos" : model.route.title
+    }
+}
+
+private struct CollapsibleSearchModifier: ViewModifier {
+    @Binding var isExpanded: Bool
+    @Binding var text: String
+    
+    func body(content: Content) -> some View {
+        if isExpanded {
+            content.searchable(text: $text, isPresented: $isExpanded, placement: .toolbar, prompt: "Search")
+        } else {
+            content
+        }
     }
 }
