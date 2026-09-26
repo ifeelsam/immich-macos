@@ -208,9 +208,11 @@ private struct Sidebar: View {
     let onSelect: (LibraryRoute) -> Void
 
     var body: some View {
-        List(selection: $route) {
+        // No List(selection:): selection is drawn manually so the active
+        // tab is always highlighted and every tap fires through onSelect.
+        List {
             Section("Library") {
-                sidebarRow(.library, label: "Photos", icon: "photo.on.rectangle", badge: libraryCount > 0 ? libraryCount.formatted() : "")
+                sidebarRow(.library, label: "Library", icon: "photo.on.rectangle", badge: libraryCount > 0 ? libraryCount.formatted() : "")
                 sidebarRow(.favorites, label: "Favorites", icon: "heart")
                 sidebarRow(.videos, label: "Videos", icon: "play.square")
                 sidebarRow(.archived, label: "Archived", icon: "archivebox")
@@ -248,30 +250,49 @@ private struct Sidebar: View {
     }
 
     private func sidebarRow(_ route: LibraryRoute, label: String, icon: String, badge: String = "") -> some View {
-        // Plain Buttons: the action fires on every tap (even re-tapping
-        // the active tab, e.g. to exit an open photo) while List keeps
-        // native selection highlight via .tag. onTapGesture would steal
-        // the click and break both.
-        Button { onSelect(route) } label: {
+        let selected = isSelected(route)
+        return Button { onSelect(route) } label: {
             Label(label, systemImage: icon)
+                .foregroundStyle(selected ? Color.accentColor : Color.primary)
         }
         .buttonStyle(.plain)
-        .tag(route)
         .badge(badge)
+        .listRowBackground(rowHighlight(selected: selected))
     }
 
     private func albumRow(_ album: ImmichAlbum) -> some View {
-        Button { onSelect(.album(album)) } label: {
+        let target = LibraryRoute.album(album)
+        let selected = isSelected(target)
+        return Button { onSelect(target) } label: {
             Label {
                 Text(album.albumName).lineLimit(1)
             } icon: {
                 Image(systemName: "rectangle.stack")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(selected ? Color.accentColor : Color.secondary)
             }
+            .foregroundStyle(selected ? Color.accentColor : Color.primary)
         }
         .buttonStyle(.plain)
-        .tag(LibraryRoute.album(album))
         .badge(album.assetCount.map { "\($0)" } ?? "")
+        .listRowBackground(rowHighlight(selected: selected))
+    }
+
+    private func isSelected(_ target: LibraryRoute) -> Bool {
+        guard let current = route else { return false }
+        // A person's photos still belong to the People tab.
+        if target == .people, case .person = current { return true }
+        return current == target
+    }
+
+    @ViewBuilder
+    private func rowHighlight(selected: Bool) -> some View {
+        if selected {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .fill(Color.accentColor.opacity(0.2))
+                .padding(.horizontal, 4)
+        } else {
+            Color.clear
+        }
     }
 }
 
