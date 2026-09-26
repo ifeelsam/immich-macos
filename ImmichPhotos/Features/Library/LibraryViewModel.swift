@@ -25,6 +25,7 @@ final class LibraryViewModel {
     var selectedIDs = Set<String>()
     var selectionMode = false
     var searchText = ""
+    var sortNewestFirst = true
 
     private var nextPage: Int? = 1
     private var seenIDs = Set<String>()
@@ -93,6 +94,12 @@ final class LibraryViewModel {
         else { selectedIDs.insert(id) }
     }
 
+    func applySort(newestFirst: Bool) {
+        guard sortNewestFirst != newestFirst else { return }
+        sortNewestFirst = newestFirst
+        rebuildSections()
+    }
+
     func clearSelection() {
         selectedIDs = []
         selectionMode = false
@@ -125,13 +132,22 @@ final class LibraryViewModel {
             let key = asset.fileCreatedAt.map { String($0.prefix(7)) } ?? "unknown"
             buckets[key, default: []].append(asset)
         }
-        sections = buckets.keys.sorted(by: >).map { key in
+        let sortedKeys = buckets.keys.sorted(by: sortNewestFirst ? (>) : (<))
+        sections = sortedKeys.map { key in
             let title: String
             if key == "unknown" { title = "Unknown Date" }
             else if let date = DateFormatter.monthKey.date(from: key + "-01") {
                 title = DateFormatter.monthYear.string(from: date)
             } else { title = key }
-            return Section(id: key, title: title, assets: buckets[key] ?? [])
+            var items = buckets[key] ?? []
+            items.sort {
+                ($0.fileCreatedAt ?? "") == ($1.fileCreatedAt ?? "")
+                    ? $0.id < $1.id
+                    : sortNewestFirst
+                        ? ($0.fileCreatedAt ?? "") > ($1.fileCreatedAt ?? "")
+                        : ($0.fileCreatedAt ?? "") < ($1.fileCreatedAt ?? "")
+            }
+            return Section(id: key, title: title, assets: items)
         }
     }
 }
