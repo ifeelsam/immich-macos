@@ -4,21 +4,70 @@ struct WelcomeView: View {
     let session: ImmichSession
 
     var body: some View {
-        VStack(spacing: 22) {
-            Image(systemName: "photo.on.rectangle.angled")
-                .font(.system(size: 52))
-                .symbolRenderingMode(.hierarchical)
-                .foregroundStyle(.blue)
-            VStack(spacing: 8) {
-                Text("Immich Photos")
-                    .font(.largeTitle.weight(.bold))
-                Text("A native macOS photo library for your Immich server.")
-                    .foregroundStyle(.secondary)
+        HStack(spacing: 0) {
+            // Hero panel
+            VStack(alignment: .leading, spacing: 18) {
+                Spacer()
+                Image(systemName: "camera.aperture")
+                    .font(.system(size: 56))
+                    .symbolRenderingMode(.hierarchical)
+                    .foregroundStyle(.blue)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Immich Photos")
+                        .font(.largeTitle.weight(.bold))
+                    Text("A native macOS library for your self-hosted Immich server. Fast, private, and shaped around Apple Photos.")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                VStack(alignment: .leading, spacing: 10) {
+                    FeatureRow(icon: "photo.on.rectangle", text: "Paged photo grid with month sections")
+                    FeatureRow(icon: "person.2", text: "People and Places discovery")
+                    FeatureRow(icon: "square.and.arrow.down", text: "Direct import and full-resolution download")
+                    FeatureRow(icon: "lock", text: "API keys stay in macOS Keychain")
+                }
+                .font(.callout)
+                Spacer()
+                Text("Requires Immich v1.135+ · macOS 14+")
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
             }
-            ConnectionForm(session: session, compact: false)
-                .frame(width: 440)
+            .padding(44)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color(nsColor: .controlBackgroundColor).opacity(0.5))
+
+            Divider()
+
+            // Connect panel
+            VStack(alignment: .leading, spacing: 16) {
+                Spacer()
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Connect to Immich")
+                        .font(.title2.weight(.semibold))
+                    Text("Paste your server URL and an API key with asset and album read access.")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                }
+                ConnectionForm(session: session, compact: false)
+                Spacer()
+            }
+            .padding(44)
+            .frame(width: 460)
         }
-        .padding(40)
+    }
+}
+
+private struct FeatureRow: View {
+    let icon: String
+    let text: String
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: icon)
+                .frame(width: 22)
+                .foregroundStyle(.blue)
+            Text(text)
+                .foregroundStyle(.secondary)
+        }
     }
 }
 
@@ -28,31 +77,39 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            Text("Immich Server")
-                .font(.title2.weight(.semibold))
+        VStack(alignment: .leading, spacing: 18) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Immich Server")
+                    .font(.title2.weight(.semibold))
+                Text("Connection details and key storage.")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+            }
             ConnectionForm(session: session, compact: true) {
                 onConnected()
                 dismiss()
             }
             Divider()
             VStack(alignment: .leading, spacing: 6) {
-                Text("Your API key is stored only in macOS Keychain.")
+                Label("Stored only in macOS Keychain", systemImage: "key.fill")
                     .font(.callout)
-                    .foregroundStyle(.secondary)
                 Text("Grant asset.read, asset.view, asset.download, album.read, album.create, asset.update and asset.delete according to the features you want to use.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             if case .connected = session.status {
-                Button("Sign Out", role: .destructive) {
-                    session.signOut()
-                    dismiss()
+                HStack {
+                    Spacer()
+                    Button("Sign Out", role: .destructive) {
+                        session.signOut()
+                        dismiss()
+                    }
                 }
             }
         }
-        .padding(24)
-        .frame(width: 510)
+        .padding(26)
+        .frame(width: 520)
     }
 }
 
@@ -64,15 +121,21 @@ private struct ConnectionForm: View {
     @State private var apiKey = ""
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            TextField("Server URL", text: $serverURL, prompt: Text("https://immich.example.com"))
-                .textFieldStyle(.roundedBorder)
-                .textContentType(.URL)
-                .accessibilityLabel("Immich server URL")
-            SecureField("API Key", text: $apiKey, prompt: Text("Paste an Immich API key"))
-                .textFieldStyle(.roundedBorder)
-                .accessibilityLabel("Immich API key")
-            HStack {
+        VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Server URL").font(.caption.weight(.medium)).foregroundStyle(.secondary)
+                TextField("https://immich.example.com", text: $serverURL, prompt: Text("https://immich.example.com"))
+                    .textFieldStyle(.roundedBorder)
+                    .textContentType(.URL)
+                    .accessibilityLabel("Immich server URL")
+            }
+            VStack(alignment: .leading, spacing: 4) {
+                Text("API Key").font(.caption.weight(.medium)).foregroundStyle(.secondary)
+                SecureField("Paste an Immich API key", text: $apiKey, prompt: Text("Paste an Immich API key"))
+                    .textFieldStyle(.roundedBorder)
+                    .accessibilityLabel("Immich API key")
+            }
+            HStack(spacing: 10) {
                 Button("Connect") {
                     Task {
                         if await session.connect(serverURL: serverURL, apiKey: apiKey) {
@@ -82,13 +145,20 @@ private struct ConnectionForm: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(serverURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || apiKey.isEmpty || isConnecting)
+                .keyboardShortcut(.defaultAction)
                 if isConnecting { ProgressView().controlSize(.small) }
                 Spacer()
             }
+            .padding(.top, 2)
             if case .failed(let message) = session.status {
                 Label(message, systemImage: "exclamationmark.triangle")
                     .font(.callout)
                     .foregroundStyle(.red)
+                    .fixedSize(horizontal: false, vertical: true)
+            } else if case .connected = session.status, compact {
+                Label("Connected", systemImage: "checkmark.circle.fill")
+                    .font(.callout)
+                    .foregroundStyle(.green)
             }
         }
         .onAppear {
@@ -110,7 +180,11 @@ struct NewAlbumSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("New Album").font(.title2.weight(.semibold))
+            VStack(alignment: .leading, spacing: 4) {
+                Text("New Album").font(.title2.weight(.semibold))
+                Text("Give your album a name. Selected photos will be added automatically.")
+                    .font(.callout).foregroundStyle(.secondary)
+            }
             TextField("Album name", text: $name)
                 .textFieldStyle(.roundedBorder)
                 .onSubmit(create)
@@ -123,7 +197,7 @@ struct NewAlbumSheet: View {
             }
         }
         .padding(24)
-        .frame(width: 360)
+        .frame(width: 380)
     }
 
     private func create() {
