@@ -276,22 +276,8 @@ private struct LibraryScreen: View {
     let onDelete: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            // Plain content header: macOS puts toolbar items in glass
-            // bubbles, so the title lives here to stay bubble-free.
-            VStack(alignment: .leading, spacing: 1) {
-                Text(model.route.title)
-                    .font(.title2.weight(.bold))
-                Text(subtitle)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 12)
-            .padding(.bottom, 8)
-
-            Group {
-                switch model.phase {
+        Group {
+            switch model.phase {
             case .idle, .loading:
                 VStack(spacing: 12) {
                     ProgressView()
@@ -347,11 +333,20 @@ private struct LibraryScreen: View {
                     }
                 }
             }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .searchable(text: $model.searchText, placement: .toolbar, prompt: "Search filename or place")
         .toolbar {
+            ToolbarItem(placement: .navigation) {
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(model.route.title)
+                        .font(.title2.weight(.bold))
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.vertical, 4)
+            }
+
             ToolbarItemGroup(placement: .primaryAction) {
                 // Zoom (Photos-style: animated, stepped)
                 HStack(spacing: 6) {
