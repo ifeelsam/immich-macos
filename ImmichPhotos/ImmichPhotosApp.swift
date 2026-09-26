@@ -222,15 +222,7 @@ private struct Sidebar: View {
             }
             Section("Albums") {
                 ForEach(albums) { album in
-                    Label {
-                        Text(album.albumName).lineLimit(1)
-                    } icon: {
-                        Image(systemName: "rectangle.stack")
-                            .foregroundStyle(.secondary)
-                    }
-                    .tag(LibraryRoute.album(album))
-                    .badge(album.assetCount.map { "\($0)" } ?? "")
-                    .onTapGesture { onSelect(.album(album)) }
+                    albumRow(album)
                 }
             }
         }
@@ -256,12 +248,30 @@ private struct Sidebar: View {
     }
 
     private func sidebarRow(_ route: LibraryRoute, label: String, icon: String, badge: String = "") -> some View {
-        Label(label, systemImage: icon)
-            .tag(route)
-            .badge(badge)
-            // List selection alone won't react when re-tapping the
-            // active tab (e.g. to exit an open photo), so handle it.
-            .onTapGesture { onSelect(route) }
+        // Plain Buttons: the action fires on every tap (even re-tapping
+        // the active tab, e.g. to exit an open photo) while List keeps
+        // native selection highlight via .tag. onTapGesture would steal
+        // the click and break both.
+        Button { onSelect(route) } label: {
+            Label(label, systemImage: icon)
+        }
+        .buttonStyle(.plain)
+        .tag(route)
+        .badge(badge)
+    }
+
+    private func albumRow(_ album: ImmichAlbum) -> some View {
+        Button { onSelect(.album(album)) } label: {
+            Label {
+                Text(album.albumName).lineLimit(1)
+            } icon: {
+                Image(systemName: "rectangle.stack")
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .buttonStyle(.plain)
+        .tag(LibraryRoute.album(album))
+        .badge(album.assetCount.map { "\($0)" } ?? "")
     }
 }
 
