@@ -292,7 +292,7 @@ private struct Sidebar: View {
     private func rowHighlight(selected: Bool) -> some View {
         if selected {
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .fill(Color.accentColor.opacity(0.2))
+                .fill(Color.primary.opacity(0.15))
                 .padding(.horizontal, 4)
         } else {
             Color.clear
