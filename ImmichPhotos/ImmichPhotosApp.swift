@@ -254,6 +254,8 @@ private struct Sidebar: View {
         return Button { onSelect(route) } label: {
             Label(label, systemImage: icon)
                 .foregroundStyle(selected ? Color.accentColor : Color.primary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .badge(badge)
@@ -271,6 +273,8 @@ private struct Sidebar: View {
                     .foregroundStyle(selected ? Color.accentColor : Color.secondary)
             }
             .foregroundStyle(selected ? Color.accentColor : Color.primary)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .badge(album.assetCount.map { "\($0)" } ?? "")
