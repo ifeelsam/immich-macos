@@ -24,9 +24,13 @@ struct PlacesBrowser: View {
             } else {
                 AssetMap(pins: pins, onSelect: onSelect)
                     .overlay(alignment: .bottomLeading) {
-                        Text("Showing locations from the newest \(pins.count) photos")
-                            .font(.caption).padding(.horizontal, 10).padding(.vertical, 7)
-                            .background(.regularMaterial, in: Capsule()).padding(14)
+                        HStack(spacing: 6) {
+                            Image(systemName: "mappin.circle.fill")
+                            Text("\(pins.count) located photos · newest 540 scanned")
+                        }
+                            .font(.caption).padding(.horizontal, 12).padding(.vertical, 8)
+                            .background(.regularMaterial, in: Capsule()).padding(16)
+                            .shadow(color: .black.opacity(0.12), radius: 6, y: 2)
                     }
             }
         }
