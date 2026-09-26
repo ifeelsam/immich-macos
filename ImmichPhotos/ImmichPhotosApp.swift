@@ -86,7 +86,8 @@ struct ImmichPhotosApp: App {
                 albums: albums,
                 libraryCount: library.assets.count,
                 onImport: { showImporter = true },
-                onSettings: { showSettings = true }
+                onSettings: { showSettings = true },
+                onSelect: { route = $0; selectedAsset = nil }
             )
             .navigationSplitViewColumnWidth(min: 210, ideal: 248, max: 320)
         } detail: {
@@ -204,27 +205,20 @@ private struct Sidebar: View {
     let libraryCount: Int
     let onImport: () -> Void
     let onSettings: () -> Void
+    let onSelect: (LibraryRoute) -> Void
 
     var body: some View {
         List(selection: $route) {
             Section("Library") {
-                Label("Photos", systemImage: "photo.on.rectangle")
-                    .tag(LibraryRoute.library)
-                    .badge(libraryCount > 0 ? libraryCount.formatted() : "")
-                Label("Favorites", systemImage: "heart")
-                    .tag(LibraryRoute.favorites)
-                Label("Videos", systemImage: "play.square")
-                    .tag(LibraryRoute.videos)
-                Label("Archived", systemImage: "archivebox")
-                    .tag(LibraryRoute.archived)
-                Label("Locked", systemImage: "lock")
-                    .tag(LibraryRoute.locked)
+                sidebarRow(.library, label: "Photos", icon: "photo.on.rectangle", badge: libraryCount > 0 ? libraryCount.formatted() : "")
+                sidebarRow(.favorites, label: "Favorites", icon: "heart")
+                sidebarRow(.videos, label: "Videos", icon: "play.square")
+                sidebarRow(.archived, label: "Archived", icon: "archivebox")
+                sidebarRow(.locked, label: "Locked", icon: "lock")
             }
             Section("Discover") {
-                Label("People", systemImage: "person.2")
-                    .tag(LibraryRoute.people)
-                Label("Places", systemImage: "map")
-                    .tag(LibraryRoute.places)
+                sidebarRow(.people, label: "People", icon: "person.2")
+                sidebarRow(.places, label: "Places", icon: "map")
             }
             Section("Albums") {
                 ForEach(albums) { album in
@@ -236,6 +230,7 @@ private struct Sidebar: View {
                     }
                     .tag(LibraryRoute.album(album))
                     .badge(album.assetCount.map { "\($0)" } ?? "")
+                    .onTapGesture { onSelect(.album(album)) }
                 }
             }
         }
@@ -258,6 +253,15 @@ private struct Sidebar: View {
             .padding(.vertical, 10)
             .background(.bar)
         }
+    }
+
+    private func sidebarRow(_ route: LibraryRoute, label: String, icon: String, badge: String = "") -> some View {
+        Label(label, systemImage: icon)
+            .tag(route)
+            .badge(badge)
+            // List selection alone won't react when re-tapping the
+            // active tab (e.g. to exit an open photo), so handle it.
+            .onTapGesture { onSelect(route) }
     }
 }
 
