@@ -16,16 +16,16 @@
 
 ## Features
 
-- 📸 **Library browsing** — paged, lazy-loading photo grid with adaptive sizing
-- 🗂️ **Collections** — Library, Favorites, Videos, Archived, and Album views
-- 🔍 **Search** — filter loaded photos by filename or location
-- 🖼️ **Photo detail** — full-resolution preview with EXIF info and AVPlayer video streaming
-- 👤 **People** — browse recognized faces from your server
-- 🗺️ **Places** — interactive map of geotagged photos
-- ⬆️ **Import** — upload photos and videos directly to Immich
-- ✏️ **Management** — favorite, archive, delete, create albums, bulk select
-- 🔐 **Secure** — API keys in macOS Keychain, never stores locked-folder PINs
-- 🌐 **Self-hosted friendly** — works with HTTP/private LAN servers
+- 📸 **Library browsing** - paged, lazy-loading photo grid with adaptive sizing
+- 🗂️ **Collections** - Library, Favorites, Videos, Archived, and Album views
+- 🔍 **Search** - filter loaded photos by filename or location
+- 🖼️ **Photo detail** - full-resolution preview with EXIF info and AVPlayer video streaming
+- 👤 **People** - browse recognized faces from your server
+- 🗺️ **Places** - interactive map of geotagged photos
+- ⬆️ **Import** - upload photos and videos directly to Immich
+- ✏️ **Management** - favorite, archive, delete, create albums, bulk select
+- 🔐 **Secure** - API keys in macOS Keychain, never stores locked-folder PINs
+- 🌐 **Self-hosted friendly** - works with HTTP/private LAN servers
 
 ## Build
 
@@ -55,7 +55,7 @@ Requires **macOS 14 (Sonoma)** or later and **Xcode 15+**.
 
 ## Locked Photos
 
-Immich returns HTTP 401 for locked assets requested with an API key. The app shows a dedicated Locked screen and opens Immich in your browser for secure PIN unlock — it never asks for or stores a PIN.
+Immich returns HTTP 401 for locked assets requested with an API key. The app shows a dedicated Locked screen and opens Immich in your browser for secure PIN unlock - it never asks for or stores a PIN.
 
 ## Roadmap
 
