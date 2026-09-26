@@ -26,7 +26,7 @@ struct ImmichPhotosApp: App {
                     WelcomeView(session: session)
                 }
             }
-            .frame(minWidth: 920, minHeight: 620)
+            .frame(minWidth: 980, minHeight: 640)
             .sheet(isPresented: $showSettings) {
                 SettingsView(session: session) {
                     Task { await reloadConnection() }
@@ -57,7 +57,7 @@ struct ImmichPhotosApp: App {
                 }
                 Button("Cancel", role: .cancel) { pendingDelete = [] }
             } message: {
-                Text("Items move to the Immich trash according to your server’s retention settings.")
+                Text("Items move to the Immich trash according to your server's retention settings.")
             }
             .alert("Immich Photos", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
                 Button("OK", role: .cancel) { errorMessage = nil }
@@ -81,8 +81,14 @@ struct ImmichPhotosApp: App {
 
     @ViewBuilder private func gallery(client: ImmichClient) -> some View {
         NavigationSplitView {
-            Sidebar(route: $route, albums: albums)
-                .navigationSplitViewColumnWidth(min: 200, ideal: 240, max: 300)
+            Sidebar(
+                route: $route,
+                albums: albums,
+                libraryCount: library.assets.count,
+                onImport: { showImporter = true },
+                onSettings: { showSettings = true }
+            )
+            .navigationSplitViewColumnWidth(min: 210, ideal: 248, max: 320)
         } detail: {
             Group {
                 if let asset = selectedAsset {
@@ -91,7 +97,7 @@ struct ImmichPhotosApp: App {
                         client: client,
                         thumbnails: thumbnails,
                         onClose: { selectedAsset = nil },
-                        onUpdated: { updated in library.replace(updated) },
+                        onUpdated: { library.replace($0) },
                         onDelete: { id in
                             selectedAsset = nil
                             pendingDelete = [id]
@@ -120,7 +126,6 @@ struct ImmichPhotosApp: App {
                     )
                 }
             }
-            .background(.regularMaterial)
         }
         .navigationSplitViewStyle(.balanced)
         .task { await reloadConnection() }
@@ -196,12 +201,16 @@ struct ImmichPhotosApp: App {
 private struct Sidebar: View {
     @Binding var route: LibraryRoute?
     let albums: [ImmichAlbum]
+    let libraryCount: Int
+    let onImport: () -> Void
+    let onSettings: () -> Void
 
     var body: some View {
         List(selection: $route) {
-            Section {
-                Label("Library", systemImage: "photo.on.rectangle")
+            Section("Library") {
+                Label("Photos", systemImage: "photo.on.rectangle")
                     .tag(LibraryRoute.library)
+                    .badge(libraryCount > 0 ? libraryCount.formatted() : "")
                 Label("Favorites", systemImage: "heart")
                     .tag(LibraryRoute.favorites)
                 Label("Videos", systemImage: "play.square")
@@ -219,12 +228,36 @@ private struct Sidebar: View {
             }
             Section("Albums") {
                 ForEach(albums) { album in
-                    Label(album.albumName, systemImage: "rectangle.stack")
-                        .tag(LibraryRoute.album(album))
+                    Label {
+                        Text(album.albumName).lineLimit(1)
+                    } icon: {
+                        Image(systemName: "rectangle.stack")
+                            .foregroundStyle(.secondary)
+                    }
+                    .tag(LibraryRoute.album(album))
+                    .badge(album.assetCount.map { "\($0)" } ?? "")
                 }
             }
         }
         .listStyle(.sidebar)
+        .safeAreaInset(edge: .bottom) {
+            HStack {
+                Button(action: onImport) {
+                    Label("Import", systemImage: "square.and.arrow.down")
+                }
+                .buttonStyle(.link)
+                Spacer()
+                Button(action: onSettings) {
+                    Image(systemName: "gearshape")
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+                .help("Settings")
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(.bar)
+        }
     }
 }
 
@@ -246,22 +279,29 @@ private struct LibraryScreen: View {
         Group {
             switch model.phase {
             case .idle, .loading:
-                ProgressView("Loading \(model.route.title)…")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                VStack(spacing: 12) {
+                    ProgressView()
+                        .controlSize(.large)
+                    Text("Loading \(model.route.title)…")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             case .empty:
                 ContentUnavailableView(
-                    "No Items",
-                    systemImage: "photo.on.rectangle.angled",
-                    description: Text("Import photos or choose another library view.")
+                    model.route.title,
+                    systemImage: model.route.emptyIcon,
+                    description: Text(model.route.emptyHint)
                 )
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             case .failed(let message):
                 ContentUnavailableView {
-                    Label("Couldn’t Load Photos", systemImage: "exclamationmark.triangle")
+                    Label("Couldn't Load Photos", systemImage: "exclamationmark.triangle")
                 } description: {
                     Text(message)
                 } actions: {
                     Button("Try Again") { Task { await model.refresh(using: client) } }
+                        .buttonStyle(.borderedProminent)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             case .loaded:
@@ -277,122 +317,182 @@ private struct LibraryScreen: View {
                     onNearEnd: { model.loadMore(after: $0, using: client) }
                 )
                 .overlay(alignment: .bottom) {
-                    if model.isLoadingMore { ProgressView().padding(12) }
+                    if model.isLoadingMore {
+                        HStack(spacing: 8) {
+                            ProgressView().controlSize(.small)
+                            Text("Loading more…").font(.caption).foregroundStyle(.secondary)
+                        }
+                        .padding(.horizontal, 14).padding(.vertical, 8)
+                        .background(.regularMaterial, in: Capsule())
+                        .padding(.bottom, 16)
+                    }
+                }
+                .overlay(alignment: .bottom) {
+                    if model.selectionMode && !model.selectedIDs.isEmpty {
+                        selectionBar
+                    }
                 }
             }
         }
-        .modifier(CollapsibleSearchModifier(isExpanded: $isSearchExpanded, text: $model.searchText))
+        .searchable(text: $model.searchText, placement: .toolbar, prompt: "Search filename or place")
         .toolbar {
             ToolbarItem(placement: .navigation) {
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 1) {
                     Text(model.route.title)
                         .font(.title2.weight(.bold))
-                    if let dateRange {
-                        Text(dateRange)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
+                .padding(.vertical, 4)
             }
 
             ToolbarItemGroup(placement: .primaryAction) {
-                gridSizeControls
-
-                Menu {
-                    Button("Newest First") { Task { await model.refresh(using: client) } }
-                    Button("Refresh") { Task { await model.refresh(using: client) } }
-                } label: {
-                    HStack(spacing: 4) {
-                        Text(collectionMenuTitle)
-                        Image(systemName: "chevron.up.chevron.down")
-                            .imageScale(.small)
-                    }
-                }
-
-                ControlGroup {
-                    Button { } label: {
-                        Image(systemName: "rectangle.arrowtriangle.2.outward")
-                    }
-                    Button { } label: {
-                        Image(systemName: "line.3.horizontal")
-                    }
-                    Menu {
-                        if model.selectionMode {
-                            Button("New Album…", action: onCreateAlbum)
-                                .disabled(model.selectedIDs.isEmpty)
-                            if !albums.isEmpty {
-                                Menu("Add to Album") {
-                                    ForEach(albums) { album in
-                                        Button(album.albumName) { onAddToAlbum(album) }
-                                    }
-                                }
-                                .disabled(model.selectedIDs.isEmpty)
-                            }
-                            Divider()
-                            Button("Delete from Immich", role: .destructive, action: onDelete)
-                                .disabled(model.selectedIDs.isEmpty)
-                            Divider()
+                // Zoom (Photos-style: animated, stepped)
+                HStack(spacing: 6) {
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.22)) {
+                            gridSize = max(100, gridSize - 30)
                         }
-                        Button(model.selectionMode ? "Done Selecting" : "Select Photos") { model.selectionMode.toggle() }
-                        Divider()
-                        Button(isUploading ? "Importing…" : "Import Photos…", action: onImport)
-                            .disabled(isUploading)
-                        Button("Refresh Library") { Task { await model.refresh(using: client) } }
-                        Divider()
-                        Button("Settings…", action: onSettings)
                     } label: {
-                        Image(systemName: "ellipsis")
+                        Image(systemName: "minus.magnifyingglass")
                     }
+                    .disabled(gridSize <= 100)
+                    Slider(value: zoomBinding, in: 100...260, step: 10)
+                        .frame(width: 90)
+                        .help("Thumbnail size")
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.22)) {
+                            gridSize = min(260, gridSize + 30)
+                        }
+                    } label: {
+                        Image(systemName: "plus.magnifyingglass")
+                    }
+                    .disabled(gridSize >= 260)
                 }
 
                 Menu {
-                    Button(action: {}) { Label("Info", systemImage: "info.circle") }
-                    Button(action: {}) { Label("Share", systemImage: "square.and.arrow.up") }
-                    Button(action: {}) { Label("Favourite", systemImage: "heart") }
-                    Button(action: {}) { Label("Rotate", systemImage: "rotate.right") }
+                    Picker("Sort", selection: sortBinding) {
+                        Text("Newest First").tag(true)
+                        Text("Oldest First").tag(false)
+                    }
+                    .pickerStyle(.inline)
                 } label: {
-                    Image(systemName: "chevron.forward.2")
+                    Label("Sort", systemImage: "arrow.up.arrow.down")
                 }
-                .menuIndicator(.hidden)
+                .help("Sort order")
+
+                Button(model.selectionMode ? "Done" : "Select") {
+                    withAnimation { model.selectionMode.toggle() }
+                }
+                .help("Toggle selection mode")
+
+                Menu {
+                    Button("New Album…", action: onCreateAlbum)
+                    if !albums.isEmpty {
+                        Menu("Add \(model.selectedIDs.count) Selected to Album") {
+                            ForEach(albums) { album in
+                                Button(album.albumName) { onAddToAlbum(album) }
+                            }
+                        }
+                        .disabled(model.selectedIDs.isEmpty)
+                    }
+                    Divider()
+                    Button(isUploading ? "Importing…" : "Import Photos…", action: onImport)
+                        .disabled(isUploading)
+                    Button("Refresh Library") { Task { await model.refresh(using: client) } }
+                    Divider()
+                    Button("Settings…", action: onSettings)
+                } label: {
+                    Label("More", systemImage: "ellipsis.circle")
+                }
             }
         }
     }
 
-    private var gridSizeControls: some View {
-        ControlGroup {
-            Button { gridSize = max(100, gridSize - 10) } label: {
-                Image(systemName: "minus")
+    private var sortBinding: Binding<Bool> {
+        Binding(
+            get: { model.sortNewestFirst },
+            set: { model.applySort(newestFirst: $0) }
+        )
+    }
+
+    private var zoomBinding: Binding<CGFloat> {
+        Binding(
+            get: { gridSize },
+            set: { newValue in withAnimation(.easeInOut(duration: 0.22)) { gridSize = newValue } }
+        )
+    }
+
+    private var selectionBar: some View {
+        HStack(spacing: 12) {
+            Text("\(model.selectedIDs.count) selected")
+                .font(.callout.weight(.medium))
+            Divider().frame(height: 16)
+            Button("New Album…", action: onCreateAlbum)
+            if !albums.isEmpty {
+                Menu("Add to Album") {
+                    ForEach(albums) { album in Button(album.albumName) { onAddToAlbum(album) } }
+                }
             }
-            .disabled(gridSize <= 100)
-            Button { gridSize = min(260, gridSize + 10) } label: {
-                Image(systemName: "plus")
-            }
-            .disabled(gridSize >= 260)
+            Button("Delete", role: .destructive, action: onDelete)
+            Button("Clear") { model.clearSelection() }
         }
+        .buttonStyle(.link)
+        .padding(.horizontal, 16).padding(.vertical, 10)
+        .background(.regularMaterial, in: Capsule())
+        .shadow(color: .black.opacity(0.15), radius: 8, y: 2)
+        .padding(.bottom, 18)
+    }
+
+    private var subtitle: String {
+        let total = model.displayedSections.reduce(0) { $0 + $1.assets.count }
+        var parts: [String] = ["\(total.formatted()) \(total == 1 ? "item" : "items")"]
+        if let range = dateRange { parts.append(range) }
+        if !model.searchText.trimmingCharacters(in: .whitespaces).isEmpty {
+            parts.append("filtered")
+        }
+        return parts.joined(separator: " · ")
     }
 
     private var dateRange: String? {
-        let dates = model.assets.compactMap(\.createdDate)
-        guard let latest = dates.max() else { return nil }
-        let formatter = DateFormatter()
-        formatter.dateFormat = "d MMM yyyy"
-        return formatter.string(from: latest)
-    }
-
-    private var collectionMenuTitle: String {
-        model.route == .library ? "All Photos" : model.route.title
+        let dates = model.assets.compactMap(\.createdDate).sorted()
+        guard let first = dates.first, let last = dates.last else { return nil }
+        let f = DateFormatter()
+        f.dateFormat = "d MMM yyyy"
+        if Calendar.current.isDate(first, equalTo: last, toGranularity: .day) {
+            return f.string(from: last)
+        }
+        return "\(f.string(from: first)) – \(f.string(from: last))"
     }
 }
 
-private struct CollapsibleSearchModifier: ViewModifier {
-    @Binding var isExpanded: Bool
-    @Binding var text: String
-    
-    func body(content: Content) -> some View {
-        if isExpanded {
-            content.searchable(text: $text, isPresented: $isExpanded, placement: .toolbar, prompt: "Search")
-        } else {
-            content
+private extension LibraryRoute {
+    var emptyIcon: String {
+        switch self {
+        case .library: "photo.on.rectangle.angled"
+        case .favorites: "heart"
+        case .videos: "play.square"
+        case .archived: "archivebox"
+        case .locked: "lock"
+        case .people: "person.2"
+        case .places: "map"
+        case .person: "person"
+        case .album: "rectangle.stack"
+        }
+    }
+
+    var emptyHint: String {
+        switch self {
+        case .library: "Import photos or choose another view."
+        case .favorites: "Mark photos as favorites to find them here."
+        case .videos: "Videos you upload will appear here."
+        case .archived: "Archived photos stay out of your main timeline."
+        case .locked: "Locked items stay on your server."
+        case .people: "Name people in Immich to browse them here."
+        case .places: "Photos with GPS data will appear on the map."
+        case .person(let p): "No photos found for \(p.displayName)."
+        case .album(let a): "“\(a.albumName)” has no photos yet. Select photos to add some."
         }
     }
 }
