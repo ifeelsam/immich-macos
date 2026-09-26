@@ -145,6 +145,8 @@ struct PhotoDetailView: View {
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
         }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 4)
     }
 
     private var titleSubtitle: String {
