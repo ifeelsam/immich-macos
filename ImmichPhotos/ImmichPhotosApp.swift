@@ -344,7 +344,8 @@ private struct LibraryScreen: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-                .padding(.vertical, 4)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 6)
             }
 
             ToolbarItemGroup(placement: .primaryAction) {
