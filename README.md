@@ -27,6 +27,12 @@
 - 🔐 **Secure** - API keys in macOS Keychain, never stores locked-folder PINs
 - 🌐 **Self-hosted friendly** - works with HTTP/private LAN servers
 
+## Install
+
+1. Download the latest `ImmichPhotos-x.y.z-macOS.dmg` from [Releases](https://github.com/ifeelsam/immich-macos/releases) and open it.
+2. Drag **Immich Photos** into **Applications**, then launch it from there.
+3. Releases are currently unsigned, so macOS blocks the first launch. Right-click the app, choose **Open**, then confirm. You only do this once.
+
 ## Build
 
 ```sh
