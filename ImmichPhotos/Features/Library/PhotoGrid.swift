@@ -85,7 +85,6 @@ private struct AssetTile: View {
                             .scaledToFill()
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                             .clipped()
-                            .allowsHitTesting(false)
                     } else if failed {
                         VStack(spacing: 6) {
                             Image(systemName: "photo").font(.title2)
@@ -100,7 +99,6 @@ private struct AssetTile: View {
                 .overlay {
                     if isHovering && !selectionMode {
                         LinearGradient(colors: [.clear, .black.opacity(0.3)], startPoint: .center, endPoint: .bottom)
-                            .allowsHitTesting(false)
                     }
                 }
                 .overlay(alignment: .bottomLeading) {
@@ -145,6 +143,7 @@ private struct AssetTile: View {
                 .opacity(isSelected && selectionMode ? 0.85 : 1)
                 .brightness(isHovering && !selectionMode ? 0.04 : 0)
                 .animation(.easeOut(duration: 0.12), value: isHovering)
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .accessibilityLabel(asset.originalFileName)

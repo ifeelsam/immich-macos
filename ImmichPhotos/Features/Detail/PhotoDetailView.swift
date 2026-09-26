@@ -44,9 +44,6 @@ struct PhotoDetailView: View {
                 content
             }
             .frame(minWidth: 400)
-            .safeAreaInset(edge: .bottom) {
-                captionBar
-            }
 
             if showInfo {
                 inspector
@@ -60,6 +57,9 @@ struct PhotoDetailView: View {
                 }
                 .keyboardShortcut(.cancelAction)
                 .help("Back to library (Esc)")
+            }
+            ToolbarItem(placement: .principal) {
+                titleBlock
             }
             ToolbarItemGroup(placement: .primaryAction) {
                 Button { toggleFavorite() } label: {
@@ -135,30 +135,24 @@ struct PhotoDetailView: View {
         }
     }
 
-    private var captionBar: some View {
-        VStack(spacing: 2) {
-            Text(currentAsset.originalFileName)
-                .font(.callout.weight(.medium))
+    private var titleBlock: some View {
+        VStack(spacing: 0) {
+            Text(currentAsset.createdDate.map { DateFormatter.detail.string(from: $0) } ?? currentAsset.originalFileName)
+                .font(.headline)
                 .lineLimit(1)
-            HStack(spacing: 6) {
-                if let date = currentAsset.createdDate {
-                    Text(DateFormatter.detail.string(from: date))
-                }
-                if let place, currentAsset.createdDate != nil {
-                    Text("·").foregroundStyle(.quaternary)
-                    Text(place).lineLimit(1)
-                } else if let place {
-                    Text(place).lineLimit(1)
-                }
-            }
-            .font(.caption)
-            .foregroundStyle(.secondary)
+            Text(titleSubtitle)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
         }
-        .multilineTextAlignment(.center)
-        .padding(.horizontal, 20)
-        .padding(.vertical, 10)
-        .frame(maxWidth: .infinity)
-        .background(.ultraThinMaterial)
+    }
+
+    private var titleSubtitle: String {
+        if let place {
+            "\(currentAsset.originalFileName) · \(place)"
+        } else {
+            currentAsset.originalFileName
+        }
     }
 
     private var inspector: some View {
