@@ -40,7 +40,7 @@ struct PhotoDetailView: View {
     var body: some View {
         HSplitView {
             ZStack {
-                Color.black.ignoresSafeArea()
+                Color(nsColor: .windowBackgroundColor).ignoresSafeArea()
                 content
             }
             .frame(minWidth: 400)
