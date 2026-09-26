@@ -2,6 +2,18 @@
 
 All notable changes to Immich Photos for macOS will be documented in this file.
 
+## [v0.2.0] — 2026-09-27
+
+### ✨ Photos-Style UI Overhaul
+
+- **Library grid** — month section headers with counts, wider Photos-like spacing, overlay-based square tiles that stay intact maximized, animated zoom in/out
+- **Sorting** — newest-first / oldest-first sort order
+- **Sidebar** — photo/album count badges, Import + Settings footer
+- **Toolbar** — working search, sort menu, Select/Done, consolidated More menu, floating selection action bar
+- **Detail view** — date title centered in the toolbar, unified window-background stage (no black seam), Info inspector, F/I/Esc shortcuts
+- **Onboarding** — two-pane welcome hero, grouped server settings
+- **Fixes** — repaired broken search state that prevented compilation
+
 ## [v0.1.0] — 2026-09-22
 
 ### 🎉 Initial Release
