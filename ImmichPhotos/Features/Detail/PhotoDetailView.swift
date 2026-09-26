@@ -145,6 +145,14 @@ struct PhotoDetailView: View {
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
         }
+        .padding(.horizontal, 18)
+        .padding(.vertical, 5)
+        .frame(maxWidth: 440)
+        .background(.bar, in: Capsule())
+        .overlay {
+            Capsule()
+                .strokeBorder(.quaternary, lineWidth: 0.5)
+        }
     }
 
     private var titleSubtitle: String {
