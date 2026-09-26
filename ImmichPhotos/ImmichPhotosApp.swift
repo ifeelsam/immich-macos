@@ -251,11 +251,18 @@ private struct Sidebar: View {
 
     private func sidebarRow(_ route: LibraryRoute, label: String, icon: String, badge: String = "") -> some View {
         let selected = isSelected(route)
+        let tint = selected ? Color.accentColor : Color.primary
         return Button { onSelect(route) } label: {
-            Label(label, systemImage: icon)
-                .foregroundStyle(selected ? Color.accentColor : Color.primary)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .contentShape(Rectangle())
+            HStack(spacing: 6) {
+                Image(systemName: icon)
+                    .symbolRenderingMode(.monochrome)
+                    .foregroundStyle(tint)
+                    .frame(width: 20, alignment: .center)
+                Text(label)
+                    .foregroundStyle(tint)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .badge(badge)
