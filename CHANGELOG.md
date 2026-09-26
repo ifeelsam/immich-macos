@@ -2,6 +2,14 @@
 
 All notable changes to Immich Photos for macOS will be documented in this file.
 
+## [v0.3.0] — 2026-09-27
+
+### Sidebar & Detail Polish
+
+- **Sidebar selection** — reliable single-tap switching, full-row tap targets, active tab always highlighted with a neutral grey pill and blue icon + text
+- **Renamed** Photos tab to Library
+- **Detail view** — date title centered in the toolbar, seamless window-background stage, hardened grid tap targets
+
 ## [v0.2.0] — 2026-09-27
 
 ### ✨ Photos-Style UI Overhaul
